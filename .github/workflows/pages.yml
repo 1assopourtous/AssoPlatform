@@ -4,41 +4,33 @@ on:
   push:
     branches: [ main ]
 
-env:
-  FLUTTER_VERSION: "stable"   # можно зафиксировать конкретный релиз
-
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend          # весь Flutter-код здесь
 
     steps:
       - uses: actions/checkout@v4
 
-      # ---------- Flutter SDK ----------
-      - uses: subosito/flutter-action@v2
+      # 1. Устанавливаем Flutter -------------------------------------------------------
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: '3.22.0'          # ← реальный релиз, качается без ошибок
+          cache: true
 
-      # ---------- Build PWA ----------
-      - name: Install dependencies
-        run: |
-          cd frontend
-          flutter pub get
+      # 2. Зависимости + билд ----------------------------------------------------------
+      - run: flutter pub get
+      - run: flutter build web --release
 
-      - name: Build web (release)
-        run: |
-          cd frontend
-          flutter build web --release \
-            --dart-define SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-            --dart-define SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-
-      # ---------- Deploy to Pages ----------
-      - name: Publish to Cloudflare Pages
+      # 3. Публикация в Cloudflare Pages ----------------------------------------------
+      - name: Publish to Pages
         uses: cloudflare/pages-action@v1
         with:
-          apiToken: ${{ secrets.CF_PAGES_TOKEN }}
-          accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: "assopourtous"           # already created in Dashboard
-          directory: "frontend/build/web"
-      - name: Report
-        run: echo "🚀 Deployed to https://assopourtous.com"
+          apiToken:   ${{ secrets.CF_PAGES_TOKEN }}
+          accountId:  ${{ secrets.CF_ACCOUNT_ID }}
+          projectName: assopourtous-site        # название вашего проекта Pages
+          directory:   build/web
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
