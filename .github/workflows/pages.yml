@@ -1,41 +1,44 @@
-name: Deploy to Cloudflare
+name: Deploy Flutter Web to Cloudflare Pages
 
 on:
   push:
     branches: [ main ]
 
+env:
+  FLUTTER_VERSION: "stable"   # можно зафиксировать конкретный релиз
+
 jobs:
-  deploy:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      # ---------- Worker ----------
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm i -g wrangler
-      - run: |
-          cd backend/worker
-          npm ci
-          npm run deploy
-        env:
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-
-      # ---------- Flutter Web ----------
+      # ---------- Flutter SDK ----------
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "stable"
-      - run: |
-          cd frontend/app
-          flutter pub get
-          flutter build web --release
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
-      - name: Upload to Cloudflare Pages
+      # ---------- Build PWA ----------
+      - name: Install dependencies
+        run: |
+          cd frontend
+          flutter pub get
+
+      - name: Build web (release)
+        run: |
+          cd frontend
+          flutter build web --release \
+            --dart-define SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            --dart-define SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      # ---------- Deploy to Pages ----------
+      - name: Publish to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CF_PAGES_TOKEN }}
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: "platform-pwa"
-          directory: "frontend/app/build/web"
+          projectName: "assopourtous"           # already created in Dashboard
+          directory: "frontend/build/web"
+      - name: Report
+        run: echo "🚀 Deployed to https://assopourtous.com"
