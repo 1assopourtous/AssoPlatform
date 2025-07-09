@@ -4,33 +4,38 @@ on:
   push:
     branches: [ main ]
 
+# 👉 добавляем права здесь (отступ без jobs)
+permissions:
+  contents: read        # чтение репозитория
+  deployments: write    # создание Deployment-записи
+
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: frontend          # весь Flutter-код здесь
+        working-directory: frontend      # весь Flutter-код здесь
 
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Устанавливаем Flutter -------------------------------------------------------
+      # 1. Устанавливаем Flutter -------------------------------------------------
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0'          # ← реальный релиз, качается без ошибок
+          flutter-version: '3.22.0'
           cache: true
 
-      # 2. Зависимости + билд ----------------------------------------------------------
+      # 2. Зависимости + билд -----------------------------------------------------
       - run: flutter pub get
       - run: flutter build web --release
 
-      # 3. Публикация в Cloudflare Pages ----------------------------------------------
+      # 3. Публикация в Cloudflare Pages -----------------------------------------
       - name: Publish to Pages
         uses: cloudflare/pages-action@v1
         with:
-          apiToken:   ${{ secrets.CF_PAGES_TOKEN }}
-          accountId:  ${{ secrets.CF_ACCOUNT_ID }}
-          projectName: assopourtous-site        # название вашего проекта Pages
+          apiToken:    ${{ secrets.CF_PAGES_TOKEN }}
+          accountId:   ${{ secrets.CF_ACCOUNT_ID }}
+          projectName: assopourtous-site   # slug Pages-проекта
           directory:   build/web
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
