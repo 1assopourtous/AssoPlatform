@@ -7,26 +7,32 @@ import 'l10n/app_localizations.dart';
 import 'router.dart';
 import 'services/push_service.dart';
 
+/// Supabase URL и anon-key приходят через --dart-define при сборке
 const supabaseUrl  = String.fromEnvironment('SUPABASE_URL');
 const supabaseAnon = String.fromEnvironment('SUPABASE_ANON_KEY');
+
+/// Firebase Web-конфиг — ваши реальные значения
+const firebaseConfig = <String, String>{
+  'apiKey'           : 'AIzaSyDEVTvnBG-bkTyOYEalPp_OE2kH5ONhIPA',
+  'appId'            : '1:38538592671:web:bf4b31ff46387c73b8fdaa',
+  'messagingSenderId': '38538592671',
+  'projectId'        : 'assopourtous-3280d',
+};
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 1) Supabase
+  // ── 1. Supabase ────────────────────────────────────────────────
   await Supabase.initialize(url: supabaseUrl, anonKey: supabaseAnon);
 
-  // 2) Firebase + FCM (замените на реальные значения из консоли Firebase)
-  await PushService.init(const {
-    'apiKey':            'AIzaSyDEVTvnBG-bkTyOYEalPp_OE2kH5ONhIPA',
-    'appId':             '1:38538592671:web:bf4b31ff46387c73b8fdaa',
-    'messagingSenderId': '38538592671',
-    'projectId':         'assopourtous-3280d',   // пример
-  });
+  // ── 2. Push-уведомления (Firebase + FCM) ───────────────────────
+  await PushService.init(firebaseConfig);
 
-  // 3) Запуск приложения
+  // ── 3. Запуск приложения ──────────────────────────────────────
   runApp(const MyApp());
 }
+
+/*───────────────────────  UI  ───────────────────────*/
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -35,14 +41,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late GoRouter _router;
+  late final GoRouter _router = createRouter();
   Locale _locale = const Locale('en');
-
-  @override
-  void initState() {
-    super.initState();
-    _router = createRouter();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,13 +80,12 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
+/*──────────────────── Top Bar ─────────────────────*/
+
 class _TopBar extends StatelessWidget {
   final Locale locale;
   final void Function(Locale) onLocaleChange;
-  const _TopBar({
-    required this.locale,
-    required this.onLocaleChange,
-  });
+  const _TopBar({required this.locale, required this.onLocaleChange});
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +99,8 @@ class _TopBar extends StatelessWidget {
           const Spacer(),
           DropdownButton<Locale>(
             value: locale,
-            dropdownColor: Colors.white,
             underline: const SizedBox.shrink(),
+            dropdownColor: Colors.white,
             onChanged: (l) => onLocaleChange(l!),
             items: const [
               DropdownMenuItem(value: Locale('en'), child: Text('EN')),
