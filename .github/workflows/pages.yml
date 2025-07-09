@@ -37,5 +37,5 @@ jobs:
           apiToken:    ${{ secrets.CF_PAGES_TOKEN }}
           accountId:   ${{ secrets.CF_ACCOUNT_ID }}
           projectName: assopourtous-site   # slug Pages-проекта
-          directory:   build/web
+          directory:   frontend/build/web
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
