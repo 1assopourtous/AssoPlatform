@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "build": "tsc"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.4",

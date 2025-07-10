@@ -1,69 +1,91 @@
+// lib/screens/auth/auth_screen.dart
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../l10n/app_localizations.dart';
-import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../services/auth_service.dart';
+import '../dashboard/dashboard_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
+
   @override
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailCtl = TextEditingController();
-  bool _isLoading = false;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLogin = true;
+  String? _error;
 
-    Future<void> _sendMagicLink() async {
-    if (!_formKey.currentState!.validate()) return;
-    setState(() => _isLoading = true);
+  Future<void> _submit() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
 
-    final supabase = Supabase.instance.client;
+    if (email.isEmpty || password.isEmpty) {
+      setState(() => _error = 'Email and password are required.');
+      return;
+    }
 
     try {
-        await supabase.auth.signInWithOtp(
-        email: _emailCtl.text,
-        emailRedirectTo: '${Uri.base.origin}/#/dashboard',
-        );
+      final token = _isLogin
+          ? await AuthService.login(email, password)
+          : await AuthService.register(email, password);
 
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Check your inbox for the magic link'),
-        ));
-    } on AuthException catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
-        );
-    } finally {
-        if (mounted) setState(() => _isLoading = false);
-    }
-    }
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('jwt_token', token);
 
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+      );
+    } catch (e) {
+      setState(() => _error = e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final t = AppLocalizations.of(context)!;
     return Scaffold(
       body: Center(
-        child: SizedBox(
-          width: 320,
-          child: Form(
-            key: _formKey,
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Text(t.email),
-              TextFormField(
-                controller: _emailCtl,
-                validator: (v) =>
-                    v != null && v.contains('@') ? null : 'Invalid email',
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _isLogin ? 'Sign In' : 'Register',
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
-              const SizedBox(height: 16),
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _sendMagicLink, child: Text(t.sendLink)),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(labelText: 'Password'),
+              ),
+              const SizedBox(height: 20),
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(_error!, style: const TextStyle(color: Colors.red)),
+                ),
+              ElevatedButton(
+                onPressed: _submit,
+                style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+                child: Text(_isLogin ? 'Login' : 'Register'),
+              ),
               TextButton(
-                  onPressed: () => context.go('/'),
-                  child: const Text('← Back')),
-            ]),
+                onPressed: () => setState(() => _isLogin = !_isLogin),
+                child: Text(_isLogin
+                    ? "Don't have an account? Register"
+                    : "Already have an account? Login"),
+              )
+            ],
           ),
         ),
       ),

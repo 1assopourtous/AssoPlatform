@@ -1,3 +1,4 @@
+# frontend/pubspec.yaml
 name: asso_platform
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -13,7 +14,10 @@ dependencies:
   intl: any
   firebase_core: any
   firebase_messaging: any
-
+  flutter_dotenv: ^5.1.0
+  url_strategy: any
+  shared_preferences: ^2.2.0
+  crypto: ^3.0.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -23,6 +27,7 @@ flutter:
   generate: true     
   assets:
     - assets/
+    - .env
 
 flutter_intl:
   enabled: true

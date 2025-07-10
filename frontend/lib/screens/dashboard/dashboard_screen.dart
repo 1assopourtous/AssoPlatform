@@ -1,88 +1,173 @@
+// lib/screens/dashboard/dashboard_screen.dart
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:intl/intl.dart';
-import '../../l10n/app_localizations.dart';
-import 'package:http/http.dart' as http;
+
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import '../../services/user_service.dart';
+
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  num _balance = 0;
-  List _notes = [];
+  String? role;
 
   @override
   void initState() {
     super.initState();
-    _loadWallet();
-    _loadNotifications();
+    _loadRole();
   }
 
-  Future<void> _loadWallet() async {
-    final res = await http
-        .get(Uri.parse('/wallet'), headers: _authHeader())
-        .then((r) => jsonDecode(r.body));
-    if (mounted) setState(() => _balance = res['balance']);
-  }
-
-  Future<void> _loadNotifications() async {
-    final res = await http
-        .get(Uri.parse('/notifications'), headers: _authHeader())
-        .then((r) => jsonDecode(r.body));
-    if (mounted) setState(() => _notes = res);
-  }
-
-  Map<String, String> _authHeader() {
-    final jwt = Supabase.instance.client.auth.currentSession?.accessToken ?? '';
-    return {'Authorization': 'Bearer $jwt'};
+  Future<void> _loadRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('jwt_token');
+    if (token != null) {
+      final payloadEncoded = token.split('.')[0];
+      final payload = json.decode(utf8.decode(base64Url.decode(base64Url.normalize(payloadEncoded))));
+      setState(() {
+        role = payload['role'] ?? 'user';
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final t = AppLocalizations.of(context)!;
-    final email = Supabase.instance.client.auth.currentUser?.email ?? '';
-    return Scaffold(
-      body: Padding(
+    if (role == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (role != 'admin') {
+      return const Scaffold(
+        body: Center(child: Text('Access Denied: Admins only.')),
+      );
+    }
+
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Text('Admin Panel'),
+          centerTitle: true,
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: 'Users'),
+              Tab(text: 'Stats'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            _UserList(),
+            _StatsView(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _UserList extends StatelessWidget {
+  const _UserList();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<User>>(
+      future: UserService.fetchUsers(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: \${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No users found'));
+        }
+
+        final users = snapshot.data!;
+
+        return ListView.separated(
+          padding: const EdgeInsets.all(16),
+          itemCount: users.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          itemBuilder: (context, index) {
+            final user = users[index];
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  const Icon(Icons.person, color: Colors.black87),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(user.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text(user.email),
+                      ],
+                    ),
+                  ),
+                  _BalanceCard(amount: user.balance),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+class _StatsView extends StatelessWidget {
+  const _StatsView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(t.dashboardGreeting(email),
-                style: const TextStyle(fontSize: 20)),
-            const SizedBox(height: 16),
-            Text('Balance: $_balance €',
-                style:
-                    const TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 24),
-            Text('Notifications', style: Theme.of(context).textTheme.titleLarge),
-            Expanded(
-                child: ListView.builder(
-              itemCount: _notes.length,
-              itemBuilder: (_, i) {
-                final n = _notes[i];
-                return ListTile(
-                  leading:
-                      n['is_read'] ? const Icon(Icons.check) : const Icon(Icons.circle),
-                  title: Text(n['title'] ?? ''),
-                  subtitle: Text(n['body'] ?? ''),
-                  trailing: Text(DateFormat.yMd().add_Hm()
-                      .format(DateTime.parse(n['created_at']))),
-                  onTap: n['is_read']
-                      ? null
-                      : () async {
-                          await http.post(
-                              Uri.parse('/notifications/${n['id']}/read'),
-                              headers: _authHeader());
-                          _loadNotifications();
-                        },
-                );
-              },
-            ))
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Text('📊 Platform Stats', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            SizedBox(height: 16),
+            Text('Total Users: —'),
+            Text('Total Balance: —'),
+            Text('Pending Transactions: —'),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BalanceCard extends StatelessWidget {
+  final int amount;
+
+  const _BalanceCard({required this.amount});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        '\$${amount.toString()}',
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

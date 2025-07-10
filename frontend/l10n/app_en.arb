@@ -11,5 +11,6 @@
   "signUp": "Sign up",
   "dashboardGreeting": "Hello {email}!",
   "aboutTitle": "About us",
-  "pageNotFound": "Page not found"
+  "pageNotFound": "Page not found",
+  "login": "Login"             
 }
