@@ -108,7 +108,7 @@ class _MessagesPage extends StatelessWidget {
                 leading: const CircleAvatar(
                     backgroundImage:
                         NetworkImage('https://via.placeholder.com/50')),
-                title: Text('User \\${i}'),
+                title: Text('User $i'),
                 subtitle: const Text('Last message'),
                 onTap: () {},
               ),
@@ -172,7 +172,7 @@ class _MyListingsPage extends StatelessWidget {
                 3,
                 (i) => Card(
                   child: ListTile(
-                    title: Text('My project \\${i}'),
+                    title: Text('My project $i'),
                     subtitle: const Text('Service'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -242,7 +242,7 @@ class _ProductCard extends StatelessWidget {
                   Text('Product name',
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   Text('Category'),
-                  Text('\\$42'),
+                  Text('\$42'),
                 ],
               ),
             ),
