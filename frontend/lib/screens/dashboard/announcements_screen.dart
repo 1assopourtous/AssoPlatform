@@ -18,8 +18,8 @@ class AnnouncementsScreen extends StatelessWidget {
         final a = announcements[i];
         return ListTile(
           leading: const Icon(Icons.campaign_outlined),
-          title: Text(a['title']!),
-          subtitle: Text(a['description']!),
+          title: Text(a['title'] as String),
+          subtitle: Text(a['description'] as String),
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Отклик отправлен')),

@@ -50,7 +50,7 @@ class CatalogScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: Ink.image(
-                    image: NetworkImage(item['image']!),
+                    image: NetworkImage(item['image'] as String),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -59,7 +59,7 @@ class CatalogScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(item['name']!,
+                      Text(item['name'] as String,
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                       Text('\$${item['price']}'),
                       const SizedBox(height: 4),

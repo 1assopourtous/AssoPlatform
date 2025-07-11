@@ -45,7 +45,7 @@ class MarketScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: Ink.image(
-                  image: NetworkImage(item['image']!),
+                  image: NetworkImage(item['image'] as String),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -54,7 +54,7 @@ class MarketScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item['name']!,
+                    Text(item['name'] as String,
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     Text('\$${item['price']}'),
                     const SizedBox(height: 8),
