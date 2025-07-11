@@ -26,8 +26,8 @@ class ProjectsScreen extends StatelessWidget {
         for (final p in projects)
           Card(
             child: ListTile(
-              title: Text(p['name']!),
-              subtitle: Text(p['category']!),
+              title: Text(p['name'] as String),
+              subtitle: Text(p['category'] as String),
             ),
           )
       ],
