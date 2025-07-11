@@ -77,6 +77,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recentAnnouncements => 'Recent Announcements';
 
   @override
+  String get featuredProjects => 'Featured Projects';
+
+  @override
+  String get categories => 'Categories';
+
+  @override
+  String get contact => 'Contact';
+
+  @override
+  String get exploreNow => 'Explore Now';
+
+  @override
   String get postProject => 'Post project';
 
   @override
