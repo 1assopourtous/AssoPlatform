@@ -9,7 +9,15 @@ class CategoriesScreen extends StatelessWidget {
     final t = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(title: Text(t.categories)),
-      body: const Center(child: Text('Categories page')),
+      body: ListView(
+        padding: const EdgeInsets.all(24),
+        children: const [
+          ListTile(leading: Icon(Icons.shopping_cart), title: Text('Buy items')),
+          ListTile(leading: Icon(Icons.sell), title: Text('Sell items')),
+          ListTile(leading: Icon(Icons.design_services), title: Text('Services')),
+          ListTile(leading: Icon(Icons.volunteer_activism), title: Text('Volunteer')),
+        ],
+      ),
     );
   }
 }

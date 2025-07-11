@@ -71,17 +71,19 @@ class _Header extends StatelessWidget {
           else
             const SizedBox.shrink(),
           const SizedBox(width: 24),
-          TextButton(
+          TextButton.icon(
             onPressed: () => Navigator.pushNamed(context, '/login'),
-            child: Text(t.login),
+            icon: const Icon(Icons.login),
+            label: Text(t.login),
           ),
           const SizedBox(width: 12),
-          ElevatedButton(
+          ElevatedButton.icon(
             onPressed: () => Navigator.pushNamed(context, '/register'),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
-            child: Text(t.signUp),
+            icon: const Icon(Icons.app_registration),
+            label: Text(t.signUp),
           ),
           const SizedBox(width: 24),
           DropdownButton<Locale>(
@@ -168,7 +170,7 @@ class _HeroSection extends StatelessWidget {
                   style: GoogleFonts.inter(fontSize: 20, color: Colors.white70),
                 ),
                 const SizedBox(height: 32),
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: () => Navigator.pushNamed(context, '/catalog'),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
@@ -177,7 +179,8 @@ class _HeroSection extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text(AppLocalizations.of(context)!.exploreNow),
+                  icon: const Icon(Icons.explore),
+                  label: Text(AppLocalizations.of(context)!.exploreNow),
                 ),
               ],
             ),
@@ -335,7 +338,7 @@ class _ProjectCard extends StatelessWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () {},
+        onTap: () => Navigator.pushNamed(context, '/about'),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -368,6 +371,12 @@ class _Footer extends StatelessWidget {
   final void Function(Locale) onLocaleChange;
   const _Footer({required this.locale, required this.onLocaleChange});
 
+  void _showSocial(BuildContext context, String name) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('$name link tapped')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -383,13 +392,16 @@ class _Footer extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.facebook)),
               IconButton(
-                onPressed: () {},
+                onPressed: () => _showSocial(context, 'Facebook'),
+                icon: const Icon(Icons.facebook),
+              ),
+              IconButton(
+                onPressed: () => _showSocial(context, 'Twitter'),
                 icon: const FaIcon(FontAwesomeIcons.twitter),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () => _showSocial(context, 'Instagram'),
                 icon: const FaIcon(FontAwesomeIcons.instagram),
               ),
               const Spacer(),

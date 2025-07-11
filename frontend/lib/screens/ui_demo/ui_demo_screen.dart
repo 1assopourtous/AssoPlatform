@@ -110,7 +110,11 @@ class _MessagesPage extends StatelessWidget {
                         NetworkImage('https://via.placeholder.com/50')),
                 title: Text('User $i'),
                 subtitle: const Text('Last message'),
-                onTap: () {},
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Open chat with User $i')),
+                  );
+                },
               ),
             ),
           ),
@@ -131,7 +135,11 @@ class _MessagesPage extends StatelessWidget {
                     hintText: 'Message',
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.send),
-                      onPressed: () {},
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Message sent')), 
+                        );
+                      },
                     ),
                     border: const OutlineInputBorder(),
                   ),
@@ -179,11 +187,19 @@ class _MyListingsPage extends StatelessWidget {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.edit),
-                          onPressed: () {},
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Edit project $i')),
+                            );
+                          },
                         ),
                         IconButton(
                           icon: const Icon(Icons.delete),
-                          onPressed: () {},
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Delete project $i')),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -224,7 +240,7 @@ class _ProductCard extends StatelessWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () {},
+        onTap: () => Navigator.pushNamed(context, '/catalog'),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -260,10 +276,11 @@ class _AnnouncementCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
-      child: const ListTile(
-        leading: Icon(Icons.announcement_outlined),
-        title: Text('Announcement title'),
-        subtitle: Text('Some description goes here.'),
+      child: ListTile(
+        leading: const Icon(Icons.announcement_outlined),
+        title: const Text('Announcement title'),
+        subtitle: const Text('Some description goes here.'),
+        onTap: () => Navigator.pushNamed(context, '/about'),
       ),
     );
   }
@@ -278,7 +295,7 @@ class _ActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
-        onTap: () {},
+        onTap: () => Navigator.pushNamed(context, '/catalog'),
         hoverColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
         child: Center(
           child: Column(

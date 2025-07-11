@@ -41,7 +41,7 @@ class WelcomeScreen extends StatelessWidget {
                 const SizedBox(height: 48),
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(
+                  child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
@@ -53,13 +53,14 @@ class WelcomeScreen extends StatelessWidget {
                         MaterialPageRoute(builder: (_) => const LoginScreen()),
                       );
                     },
-                    child: const Text('Войти'),
+                    icon: const Icon(Icons.login),
+                    label: const Text('Войти'),
                   ),
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
-                  child: OutlinedButton(
+                  child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.white),
                       minimumSize: const Size(double.infinity, 50),
@@ -71,7 +72,8 @@ class WelcomeScreen extends StatelessWidget {
                             builder: (_) => const RegisterScreen()),
                       );
                     },
-                    child: const Text(
+                    icon: const Icon(Icons.app_registration, color: Colors.white),
+                    label: const Text(
                       'Зарегистрироваться',
                       style: TextStyle(color: Colors.white),
                     ),
@@ -82,9 +84,16 @@ class WelcomeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushNamed(context, '/about');
                   },
-                  child: const Text(
-                    'Узнать больше',
-                    style: TextStyle(color: Colors.white),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.info, color: Colors.white),
+                      SizedBox(width: 8),
+                      Text(
+                        'Узнать больше',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
                   ),
                 ),
               ],

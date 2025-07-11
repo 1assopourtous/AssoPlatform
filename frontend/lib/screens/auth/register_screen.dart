@@ -79,10 +79,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: ElevatedButton.icon(
                 onPressed: _isLoading ? null : _register,
-                child:
-                    _isLoading ? const CircularProgressIndicator() : Text(t.signUp),
+                icon: const Icon(Icons.app_registration),
+                label: _isLoading
+                    ? const CircularProgressIndicator()
+                    : Text(t.signUp),
               ),
             ),
           ],
