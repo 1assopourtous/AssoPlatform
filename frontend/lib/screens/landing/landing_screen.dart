@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LandingScreen extends StatefulWidget {
   final Locale locale;
@@ -311,8 +312,14 @@ class _Footer extends StatelessWidget {
           Row(
             children: [
               IconButton(onPressed: () {}, icon: const Icon(Icons.facebook)),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.twitter)),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.instagram)),
+              IconButton(
+                onPressed: () {},
+                icon: const FaIcon(FontAwesomeIcons.twitter),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const FaIcon(FontAwesomeIcons.instagram),
+              ),
               const Spacer(),
               DropdownButton<Locale>(
                 value: locale,
