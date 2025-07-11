@@ -7,7 +7,8 @@ const app = new Hono();
 app.use(
   '*',
   cors({
-    origin: 'https://assopourtous.com/api',
+    // Allow requests from the main site
+    origin: 'https://assopourtous.com',
     allowMethods: ['GET', 'POST', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'],
   })
