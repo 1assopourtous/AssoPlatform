@@ -181,7 +181,7 @@ class _HistoryView extends StatelessWidget {
       itemBuilder: (context, index) {
         final tx = list[index];
         return ListTile(
-          title: Text('${tx['type']} \${tx['amount']}'),
+          title: Text('${tx['type']} \$${tx['amount']}'),
           subtitle: Text(tx['created_at'] ?? ''),
         );
       },
