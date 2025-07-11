@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class NotifyPage extends StatefulWidget {
   const NotifyPage({super.key});
@@ -23,8 +22,8 @@ class _NotifyPageState extends State<NotifyPage> {
   }
 
   Map<String,String> _hdr() {
-    final jwt = Supabase.instance.client.auth.currentSession!.accessToken;
-    return {'Authorization':'Bearer $jwt','Content-Type':'application/json'};
+    // TODO: replace with real auth token header
+    return {'Authorization':'Bearer demo','Content-Type':'application/json'};
   }
 
   Future<void> _loadUsers() async {

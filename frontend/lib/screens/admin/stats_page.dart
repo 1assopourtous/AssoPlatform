@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StatsPage extends StatefulWidget {
   const StatsPage({super.key});
@@ -20,8 +19,8 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Map<String,String> _hdr() {
-    final jwt = Supabase.instance.client.auth.currentSession!.accessToken;
-    return {'Authorization':'Bearer $jwt'};
+    // TODO: replace with real auth header
+    return {'Authorization': 'Bearer demo'};
   }
 
   Future<void> _load() async {

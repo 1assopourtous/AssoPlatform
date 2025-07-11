@@ -175,6 +175,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login'**
   String get login;
+
+  String get home;
+
+  String get messages;
+
+  String get myListings;
+
+  String get favorites;
+
+  String get adminPanel;
+
+  String get searchHint;
+
+  String get whatDo;
+
+  String get featuredProducts;
+
+  String get recentAnnouncements;
+
+  String get postProject;
+
+  String get projectName;
+
+  String get category;
+
+  String get location;
+
+  String get description;
+
+  String get selectChat;
 }
 
 class _AppLocalizationsDelegate

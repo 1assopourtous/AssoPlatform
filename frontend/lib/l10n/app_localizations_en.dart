@@ -48,4 +48,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get login => 'Login';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get messages => 'Messages';
+
+  @override
+  String get myListings => 'My Listings';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get adminPanel => 'Admin Panel';
+
+  @override
+  String get searchHint => 'Search';
+
+  @override
+  String get whatDo => 'What do you want to do?';
+
+  @override
+  String get featuredProducts => 'Featured Products';
+
+  @override
+  String get recentAnnouncements => 'Recent Announcements';
+
+  @override
+  String get postProject => 'Post project';
+
+  @override
+  String get projectName => 'Project name';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get selectChat => 'Select a chat to start messaging';
 }

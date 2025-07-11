@@ -2,5 +2,20 @@
   "@@locale": "fr",
   "appTitle": "Plateforme",
   "welcomeHeadline": "Bienvenue sur notre plateforme !",
-  "login": "Login"   
+  "login": "Login"
+  ,"home": "Accueil"
+  ,"messages": "Messages"
+  ,"myListings": "Mes annonces"
+  ,"favorites": "Favoris"
+  ,"adminPanel": "Admin"
+  ,"searchHint": "Rechercher"
+  ,"whatDo": "Que voulez-vous faire ?"
+  ,"featuredProducts": "Produits vedettes"
+  ,"recentAnnouncements": "Annonces récentes"
+  ,"postProject": "Publier un projet"
+  ,"projectName": "Nom du projet"
+  ,"category": "Catégorie"
+  ,"location": "Lieu"
+  ,"description": "Description"
+  ,"selectChat": "Sélectionnez un chat pour commencer"
 }
