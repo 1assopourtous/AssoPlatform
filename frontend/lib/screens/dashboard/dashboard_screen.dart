@@ -4,6 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/data_service.dart';
 import '../../services/user_service.dart';
+import 'market_screen.dart';
+import 'projects_screen.dart';
+import 'announcements_screen.dart';
+import 'messages_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -64,6 +68,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       _BalanceView(wallet: wallet),
       _HistoryView(list: transactions),
       _NotificationsView(list: notifications, onRead: _markRead),
+      const MarketScreen(),
+      const ProjectsScreen(),
+      const AnnouncementsScreen(),
+      const MessagesScreen(),
       const _SettingsView(),
       if (role == 'admin') const _AdminView(),
     ];
@@ -126,6 +134,10 @@ class _SideNav extends StatelessWidget {
       const _NavItem(icon: Icons.account_balance_wallet, label: 'Баланс'),
       const _NavItem(icon: Icons.history, label: 'История'),
       const _NavItem(icon: Icons.notifications, label: 'Уведомления'),
+      const _NavItem(icon: Icons.storefront, label: 'Маркет'),
+      const _NavItem(icon: Icons.work, label: 'Проекты'),
+      const _NavItem(icon: Icons.campaign, label: 'Объявления'),
+      const _NavItem(icon: Icons.chat, label: 'Сообщения'),
       const _NavItem(icon: Icons.settings, label: 'Настройки'),
     ];
     if (isAdmin) items.add(const _NavItem(icon: Icons.admin_panel_settings, label: 'Участники'));
