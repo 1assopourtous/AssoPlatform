@@ -4,6 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/jwt_service.dart';
 import '../dashboard/dashboard_screen.dart';
 import 'register_screen.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -12,25 +15,39 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   String? _error;
 
   Future<void> _login() async {
-    final userId = _controller.text.trim();
-    if (userId.isEmpty) {
-      setState(() => _error = 'Введите имя или ID');
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    if (email.isEmpty || password.isEmpty) {
+      setState(() => _error = 'Введите email и пароль');
       return;
     }
 
-    final token = JwtService.generateToken(userId);
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('jwt_token', token);
-
-    if (!mounted) return;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const DashboardScreen()),
+    final response = await http.post(
+      Uri.parse('https://assopourtous.com/api/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email, 'password': password}),
     );
+
+    final json = jsonDecode(response.body);
+    if (response.statusCode == 200 && json['token'] != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('jwt_token', json['token']);
+
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const DashboardScreen()),
+      );
+    } else {
+      setState(() {
+        _error = json['error'] ?? 'Ошибка входа';
+      });
+    }
   }
 
   @override
@@ -49,9 +66,18 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
               TextField(
-                controller: _controller,
+                controller: _emailController,
                 decoration: const InputDecoration(
-                  labelText: 'Ваш логин',
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Пароль',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -64,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _login,
-                  child: const Text('Продолжить'),
+                  child: const Text('Войти'),
                 ),
               ),
               TextButton(

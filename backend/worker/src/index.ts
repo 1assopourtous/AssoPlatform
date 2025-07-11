@@ -1,22 +1,19 @@
-import { Hono } from 'hono'
-import { cors } from 'hono/cors'
-import auth from './auth' // подхватывает все /api/ маршруты
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import auth from './auth';
 
-const app = new Hono()
+const app = new Hono();
 
 app.use(
   '*',
   cors({
-    origin: (origin) => {
-      const allowed = ['http://localhost:61826', 'https://assopourtous.com']
-      return allowed.includes(origin) ? origin : ''
-    },
+    origin: 'https://assopourtous.com/api',
     allowMethods: ['GET', 'POST', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization']
+    allowHeaders: ['Content-Type', 'Authorization'],
   })
-)
+);
 
-// Монтируем auth роуты
-app.route('/', auth)
+// Подключаем маршрут авторизации
+app.route('/', auth);
 
-export default app
+export default app;

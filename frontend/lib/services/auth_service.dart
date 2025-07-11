@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AuthService {
-  final baseUrl = 'https://platform-api.1assopourtous.workers.dev/api';
+  final baseUrl = 'https://assopourtous.com/api';
 
   static Future<String> login(String email, String password) async {
   final response = await http.post(

@@ -18,6 +18,8 @@ dependencies:
   url_strategy: any
   shared_preferences: ^2.2.0
   crypto: ^3.0.3
+  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

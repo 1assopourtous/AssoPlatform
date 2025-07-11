@@ -1,7 +1,8 @@
+// lib/screens/admin/users_page.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UsersPage extends StatefulWidget {
   const UsersPage({super.key});
@@ -13,20 +14,32 @@ class _UsersPageState extends State<UsersPage> {
   List _rows = [];
   bool _loading = true;
 
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('jwt_token');
+  }
+
+  Future<Map<String, String>> getAuthHeaders() async {
+    final token = await getToken();
+    return {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+  }
+
   @override
   void initState() {
     super.initState();
     _fetch();
   }
 
-  Map<String, String> _hdr() {
-    final jwt = Supabase.instance.client.auth.currentSession!.accessToken;
-    return {'Authorization': 'Bearer $jwt', 'Content-Type': 'application/json'};
-  }
-
   Future<void> _fetch() async {
     setState(() => _loading = true);
-    final res = await http.get(Uri.parse('/admin/users'), headers: _hdr());
+    final headers = await getAuthHeaders();
+    final res = await http.get(
+      Uri.parse('https://assopourtous.com/admin/users'),
+      headers: headers,
+    );
     setState(() {
       _rows = jsonDecode(res.body);
       _loading = false;
@@ -34,8 +47,12 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   Future<void> _updateRole(String id, String role) async {
-    await http.patch(Uri.parse('/admin/users/$id'),
-        headers: _hdr(), body: jsonEncode({'role': role}));
+    final headers = await getAuthHeaders();
+    await http.patch(
+      Uri.parse('https://assopourtous.com/admin/users/$id'),
+      headers: headers,
+      body: jsonEncode({'role': role}),
+    );
     _fetch();
   }
 
@@ -43,16 +60,24 @@ class _UsersPageState extends State<UsersPage> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Delete user?'),
-        content: const Text('This action is irreversible.'),
+        title: const Text('Удалить пользователя?'),
+        content: const Text('Это действие необратимо.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          ElevatedButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Отмена')),
+          ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Удалить')),
         ],
       ),
     );
     if (ok == true) {
-      await http.delete(Uri.parse('/admin/users/$id'), headers: _hdr());
+      final headers = await getAuthHeaders();
+      await http.delete(
+        Uri.parse('https://assopourtous.com/admin/users/$id'),
+        headers: headers,
+      );
       _fetch();
     }
   }
@@ -64,11 +89,11 @@ class _UsersPageState extends State<UsersPage> {
     }
     return SingleChildScrollView(
       child: PaginatedDataTable(
-        header: const Text('Registered users'),
+        header: const Text('Пользователи платформы'),
         columns: const [
           DataColumn(label: Text('Email')),
-          DataColumn(label: Text('Role')),
-          DataColumn(label: Text('Created')),
+          DataColumn(label: Text('Роль')),
+          DataColumn(label: Text('Создан')),
           DataColumn(label: Text('')),
         ],
         source: _UserDS(_rows, _updateRole, _delete),
@@ -98,9 +123,9 @@ class _UserDS extends DataTableSource {
             underline: const SizedBox.shrink(),
             onChanged: (v) => onRole(u['id'], v!),
             items: const [
-              DropdownMenuItem(value: 'member',  child: Text('member')),
+              DropdownMenuItem(value: 'member', child: Text('member')),
               DropdownMenuItem(value: 'manager', child: Text('manager')),
-              DropdownMenuItem(value: 'admin',   child: Text('admin')),
+              DropdownMenuItem(value: 'admin', child: Text('admin')),
             ],
           ),
         ),

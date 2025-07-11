@@ -1,3 +1,4 @@
+-- C:\Users\Narek\Site\AssoPlatrorn\AssoPlatrorn\backend\worker\db
 PRAGMA foreign_keys = ON;
 
 -- USERS

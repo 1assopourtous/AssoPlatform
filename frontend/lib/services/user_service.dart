@@ -20,7 +20,7 @@ class User {
 }
 
 class UserService {
-  static const String _apiUrl = 'https://platform-api.1assopourtous.workers.dev/api';
+  static const String _apiUrl = 'https://assopourtous.com/api';
 
   static Future<List<User>> fetchUsers() async {
     final response = await http.get(Uri.parse(_apiUrl));
