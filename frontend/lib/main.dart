@@ -5,10 +5,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/ui_demo/ui_demo_screen.dart';
+import 'screens/landing/landing_screen.dart';
 import 'services/jwt_service.dart';
 import 'router.dart';
 import 'l10n/app_localizations.dart';
-import 'screens/auth/welcome_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,7 +46,10 @@ class _MyAppState extends State<MyApp> {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Platform',
-          theme: ThemeData(useMaterial3: true),
+          theme: ThemeData(
+            useMaterial3: true,
+            textTheme: GoogleFonts.interTextTheme(),
+          ),
           locale: _locale,
           supportedLocales: const [
             Locale('en'),
@@ -57,21 +61,22 @@ class _MyAppState extends State<MyApp> {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: Scaffold(
-            body: Column(
-              children: [
-                _TopBar(
+          home: userId != null
+              ? Scaffold(
+                  body: Column(
+                    children: [
+                      _TopBar(
+                        locale: _locale,
+                        onLocaleChange: (l) => setState(() => _locale = l),
+                      ),
+                      const Expanded(child: UiDemoScreen()),
+                    ],
+                  ),
+                )
+              : LandingScreen(
                   locale: _locale,
                   onLocaleChange: (l) => setState(() => _locale = l),
                 ),
-                Expanded(
-                  child: userId != null
-                      ? const UiDemoScreen()
-                      : const WelcomeScreen(),
-                ),
-              ],
-            ),
-          ),
         );
       },
     );
