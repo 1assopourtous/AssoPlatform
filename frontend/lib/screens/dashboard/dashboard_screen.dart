@@ -43,8 +43,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
 
     if (role != 'admin') {
-      return const Scaffold(
-        body: Center(child: Text('Access Denied: Admins only.')),
+      return Scaffold(
+        appBar: AppBar(title: const Text('Dashboard')),
+        body: const Center(
+          child: Text('Добро пожаловать!'),
+        ),
       );
     }
 
