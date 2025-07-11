@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import auth from './auth';
+import api from './auth';
 
 const app = new Hono();
 
@@ -13,7 +13,7 @@ app.use(
   })
 );
 
-// Подключаем маршрут авторизации
-app.route('/', auth);
+// Монтируем все API маршруты
+app.route('/', api);
 
 export default app;
