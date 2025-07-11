@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/data_service.dart';
 import '../../services/user_service.dart';
@@ -18,6 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Map<String, dynamic>? wallet;
   List<dynamic> transactions = [];
   List<dynamic> notifications = [];
+  String? _error;
 
   @override
   void initState() {
@@ -29,14 +31,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('jwt_token');
     if (token != null) {
-      final payloadEncoded = token.split('.')[1];
-      final payload = json.decode(
-          utf8.decode(base64Url.decode(base64Url.normalize(payloadEncoded))));
-      role = payload['role'] ?? 'member';
-      userEmail = payload['email'];
-      wallet = await DataService.wallet(token);
-      transactions = await DataService.transactions(token);
-      notifications = await DataService.notifications(token);
+      try {
+        final payloadEncoded = token.split('.')[1];
+        final payload = json.decode(
+            utf8.decode(base64Url.decode(base64Url.normalize(payloadEncoded))));
+        role = payload['role'] ?? 'member';
+        userEmail = payload['email'];
+        wallet = await DataService.wallet(token);
+        transactions = await DataService.transactions(token);
+        notifications = await DataService.notifications(token);
+      } catch (e, st) {
+        _error = 'Ошибка загрузки данных';
+        debugPrint('Dashboard load error: $e\n$st');
+      }
       setState(() {});
     }
   }
@@ -44,6 +51,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     if (role == null) {
+      if (_error != null) {
+        return Scaffold(
+          body: Center(child: Text(_error!)),
+        );
+      }
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
