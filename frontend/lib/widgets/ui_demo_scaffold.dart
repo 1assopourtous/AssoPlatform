@@ -36,7 +36,11 @@ class UiDemoScaffold extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {},
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Notifications')),
+              );
+            },
           ),
           const CircleAvatar(
             radius: 16,
