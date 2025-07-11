@@ -6,6 +6,15 @@ export function getDB(c: Context): D1Database {
 }
 
 export const DB = {
+  async ensureUserSchema(db: D1Database) {
+    const info = await db.prepare('PRAGMA table_info(users)').all();
+    const hasPassword = info.results?.some((r: any) => r.name === 'password_hash');
+    if (!hasPassword) {
+      await db
+        .prepare('ALTER TABLE users ADD COLUMN password_hash TEXT')
+        .run();
+    }
+  },
   async getUserByEmail(db: D1Database, email: string) {
     const result = await db
       .prepare('SELECT * FROM users WHERE email = ?')

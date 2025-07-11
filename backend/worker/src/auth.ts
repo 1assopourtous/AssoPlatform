@@ -10,6 +10,7 @@ export async function registerHandler(c: Context) {
   if (!email || !password) return c.json({ error: 'Missing fields' }, 400);
 
   const db = getDB(c);
+  await DB.ensureUserSchema(db);
   const userCheck = await DB.getUserByEmail(db, email);
 
   if (userCheck) return c.json({ error: 'User already exists' }, 409);
@@ -28,6 +29,7 @@ export async function loginHandler(c: Context) {
   if (!email || !password) return c.json({ error: 'Missing fields' }, 400);
 
   const db = getDB(c);
+  await DB.ensureUserSchema(db);
   const user = await DB.getUserByEmail(db, email);
   if (!user) return c.json({ error: 'Invalid credentials' }, 401);
 
