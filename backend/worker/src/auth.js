@@ -1,13 +1,15 @@
 import { Hono } from 'hono';
 import { hashPassword, verifyPassword } from './crypto';
 import { signJWT } from './jwt';
-import { DB, getDB } from './db'; // getDB теперь импортируется
+import { DB, getDB } from './db';
+import { authenticate, authorize } from './middleware';
 const JWT_SECRET = 'supersecret';
 export async function registerHandler(c) {
     const { email, password } = await c.req.json();
     if (!email || !password)
         return c.json({ error: 'Missing fields' }, 400);
     const db = getDB(c);
+    await DB.ensureUserSchema(db);
     const userCheck = await DB.getUserByEmail(db, email);
     if (userCheck)
         return c.json({ error: 'User already exists' }, 409);
@@ -23,6 +25,7 @@ export async function loginHandler(c) {
     if (!email || !password)
         return c.json({ error: 'Missing fields' }, 400);
     const db = getDB(c);
+    await DB.ensureUserSchema(db);
     const user = await DB.getUserByEmail(db, email);
     if (!user)
         return c.json({ error: 'Invalid credentials' }, 401);
@@ -33,7 +36,40 @@ export async function loginHandler(c) {
     return c.json({ token });
 }
 // 👇 Заменяем Router на полноценный Hono instance
-const auth = new Hono();
-auth.post('/api/register', registerHandler);
-auth.post('/api/login', loginHandler);
-export default auth;
+const api = new Hono();
+api.post('/api/register', registerHandler);
+api.post('/api/login', loginHandler);
+api.use('/api/*', authenticate);
+api.get('/api/wallet', async (c) => {
+    const user = c.get('user');
+    const db = getDB(c);
+    const wallet = await DB.getWalletByUserId(db, user.id);
+    return c.json(wallet ?? { balance: 0 });
+});
+api.get('/api/transactions', async (c) => {
+    const user = c.get('user');
+    const db = getDB(c);
+    const wallet = await DB.getWalletByUserId(db, user.id);
+    if (!wallet)
+        return c.json([]);
+    const txs = await DB.getTransactions(db, wallet.id);
+    return c.json(txs.results);
+});
+api.get('/api/notifications', async (c) => {
+    const user = c.get('user');
+    const db = getDB(c);
+    const res = await DB.getNotifications(db, user.id);
+    return c.json(res.results);
+});
+api.post('/api/notifications/:id/read', async (c) => {
+    const id = c.req.param('id');
+    const db = getDB(c);
+    await DB.markNotificationRead(db, id);
+    return c.json({ success: true });
+});
+api.get('/api/admin/users', authorize('admin'), async (c) => {
+    const db = getDB(c);
+    const res = await DB.getUsersWithBalances(db);
+    return c.json(res.results);
+});
+export default api;
