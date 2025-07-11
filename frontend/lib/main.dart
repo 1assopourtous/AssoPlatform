@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/auth/login_screen.dart';
-import 'screens/dashboard/dashboard_screen.dart';
+import 'screens/ui_demo/ui_demo_screen.dart';
 import 'services/jwt_service.dart';
 import 'router.dart';
 import 'l10n/app_localizations.dart';
@@ -66,7 +66,7 @@ class _MyAppState extends State<MyApp> {
                 ),
                 Expanded(
                   child: userId != null
-                      ? const DashboardScreen()
+                      ? const UiDemoScreen()
                       : const WelcomeScreen(),
                 ),
               ],
