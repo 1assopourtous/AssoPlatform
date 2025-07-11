@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../l10n/app_localizations.dart';
 
 class LandingScreen extends StatefulWidget {
   final Locale locale;
@@ -29,6 +30,7 @@ class _LandingScreenState extends State<LandingScreen> {
             _HeroSection(controller: _controller),
             const _AdvantagesSection(),
             const _CategoriesSection(),
+            const _FeaturedProjectsSection(),
             _Footer(
               locale: widget.locale,
               onLocaleChange: widget.onLocaleChange,
@@ -47,12 +49,13 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     final isDesktop = MediaQuery.of(context).size.width > 800;
     final items = [
-      _NavItem('Home'),
-      _NavItem('Categories'),
-      _NavItem('About'),
-      _NavItem('Contact'),
+      _NavItem(t.home, '/'),
+      _NavItem(t.categories, '/categories'),
+      _NavItem('About', '/about'),
+      _NavItem(t.contact, '/contact'),
     ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -69,16 +72,16 @@ class _Header extends StatelessWidget {
             const SizedBox.shrink(),
           const SizedBox(width: 24),
           TextButton(
-            onPressed: () {},
-            child: const Text('Sign in'),
+            onPressed: () => Navigator.pushNamed(context, '/login'),
+            child: Text(t.login),
           ),
           const SizedBox(width: 12),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () => Navigator.pushNamed(context, '/register'),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
-            child: const Text('Join now'),
+            child: Text(t.signUp),
           ),
           const SizedBox(width: 24),
           DropdownButton<Locale>(
@@ -98,7 +101,8 @@ class _Header extends StatelessWidget {
 
 class _NavItem extends StatelessWidget {
   final String title;
-  const _NavItem(this.title);
+  final String route;
+  const _NavItem(this.title, this.route);
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +111,7 @@ class _NavItem extends StatelessWidget {
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: TextButton(
-          onPressed: () {},
+          onPressed: () => Navigator.pushNamed(context, route),
           child: Text(title),
         ),
       ),
@@ -165,7 +169,7 @@ class _HeroSection extends StatelessWidget {
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => Navigator.pushNamed(context, '/catalog'),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 32, vertical: 16),
@@ -173,7 +177,7 @@ class _HeroSection extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text('Explore Now'),
+                  child: Text(AppLocalizations.of(context)!.exploreNow),
                 ),
               ],
             ),
@@ -271,9 +275,9 @@ class _Cat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
-        onTap: () {},
+        onTap: () => Navigator.pushNamed(context, '/catalog'),
         hoverColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
         child: Center(
           child: Column(
@@ -285,6 +289,74 @@ class _Cat extends StatelessWidget {
               Text(label, style: GoogleFonts.inter()),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FeaturedProjectsSection extends StatelessWidget {
+  const _FeaturedProjectsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(t.featuredProjects,
+              style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 16),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              mainAxisSpacing: 24,
+              crossAxisSpacing: 24,
+              childAspectRatio: 3 / 4,
+            ),
+            itemCount: 3,
+            itemBuilder: (_, __) => const _ProjectCard(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProjectCard extends StatelessWidget {
+  const _ProjectCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {},
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Ink.image(
+                image: NetworkImage('https://via.placeholder.com/200'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text('Project name',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('Category'),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

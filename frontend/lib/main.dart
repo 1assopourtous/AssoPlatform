@@ -4,12 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/auth/login_screen.dart';
+import 'screens/auth/register_screen.dart';
 import 'screens/ui_demo/ui_demo_screen.dart';
 import 'screens/landing/landing_screen.dart';
+import 'screens/about_screen.dart';
+import 'screens/catalog_screen.dart';
+import 'screens/contact_screen.dart';
+import 'screens/categories_screen.dart';
 import 'services/jwt_service.dart';
 import 'router.dart';
 import 'l10n/app_localizations.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,10 +51,7 @@ class _MyAppState extends State<MyApp> {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Platform',
-          theme: ThemeData(
-            useMaterial3: true,
-            textTheme: GoogleFonts.interTextTheme(),
-          ),
+          theme: lightTheme,
           locale: _locale,
           supportedLocales: const [
             Locale('en'),
@@ -61,6 +63,15 @@ class _MyAppState extends State<MyApp> {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
+          routes: {
+            '/login': (_) => const LoginScreen(),
+            '/register': (_) => const RegisterScreen(),
+            '/about': (_) => const AboutScreen(),
+            '/contact': (_) => const ContactScreen(),
+            '/catalog': (_) => const CatalogScreen(),
+            '/categories': (_) => const CategoriesScreen(),
+            '/dashboard': (_) => const UiDemoScreen(),
+          },
           home: userId != null
               ? Scaffold(
                   body: Column(

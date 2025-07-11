@@ -194,6 +194,14 @@ abstract class AppLocalizations {
 
   String get recentAnnouncements;
 
+  String get featuredProjects;
+
+  String get categories;
+
+  String get contact;
+
+  String get exploreNow;
+
   String get postProject;
 
   String get projectName;
