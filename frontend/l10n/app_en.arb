@@ -12,20 +12,24 @@
   "dashboardGreeting": "Hello {email}!",
   "aboutTitle": "About us",
   "pageNotFound": "Page not found",
-  "login": "Login"
-  ,"home": "Home"
-  ,"messages": "Messages"
-  ,"myListings": "My Listings"
-  ,"favorites": "Favorites"
-  ,"adminPanel": "Admin Panel"
-  ,"searchHint": "Search"
-  ,"whatDo": "What do you want to do?"
-  ,"featuredProducts": "Featured Products"
-  ,"recentAnnouncements": "Recent Announcements"
-  ,"postProject": "Post project"
-  ,"projectName": "Project name"
-  ,"category": "Category"
-  ,"location": "Location"
-  ,"description": "Description"
-  ,"selectChat": "Select a chat to start messaging"
+  "login": "Login",
+  "home": "Home",
+  "messages": "Messages",
+  "myListings": "My Listings",
+  "favorites": "Favorites",
+  "adminPanel": "Admin Panel",
+  "searchHint": "Search",
+  "whatDo": "What do you want to do?",
+  "featuredProducts": "Featured Products",
+  "recentAnnouncements": "Recent Announcements",
+  "postProject": "Post project",
+  "projectName": "Project name",
+  "category": "Category",
+  "location": "Location",
+  "description": "Description",
+  "selectChat": "Select a chat to start messaging",
+  "featuredProjects": "Featured Projects",
+  "categories": "Categories",
+  "contact": "Contact",
+  "exploreNow": "Explore Now"
 }
